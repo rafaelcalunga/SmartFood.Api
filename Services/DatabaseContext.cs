@@ -12,7 +12,10 @@ public class DatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Recipe>().ToContainer("recipes");
-        modelBuilder.Entity<Category>().ToContainer("categories");
+        modelBuilder.Entity<Category>()
+            .ToContainer("categories");
+
+        modelBuilder.Entity<Recipe>()
+            .ToContainer("recipes");
     }
 }

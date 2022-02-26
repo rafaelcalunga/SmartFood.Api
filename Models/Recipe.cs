@@ -27,7 +27,8 @@ public class Recipe
     public String Description { get; set; }
 
     [Required]
-    public Category Category { get; set; }
+    public Guid CategoryId { get; set; }
+    public Category? Category { get; set; }
 
     public String Photo { get; set; }
 

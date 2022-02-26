@@ -21,7 +21,15 @@ public class RecipesController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<Recipe>> Get()
     {
-        return await _db.Recipes.ToListAsync();
+        var recipes = await _db.Recipes.ToListAsync();
+        var categories = await _db.Categories.ToListAsync();
+
+        foreach (var recipe in recipes)
+        {
+            recipe.Category = categories.Find(x => x.Id == recipe.CategoryId);
+        }
+
+        return recipes;
     }
 
     [HttpGet("{id}")]
@@ -34,6 +42,9 @@ public class RecipesController : ControllerBase
             return NotFound();
         }
 
+        var categories = await _db.Categories.ToListAsync();
+        recipe.Category = categories.Find(x => x.Id == recipe.CategoryId);
+
         return Ok(recipe);
     }
 
@@ -43,6 +54,16 @@ public class RecipesController : ControllerBase
         if (recipe == null)
         {
             return BadRequest();
+        }
+
+        if (recipe.Category?.Id != null)
+        {
+            var category = await _db.Categories.FindAsync(recipe.Category.Id);
+            if (category != null)
+            {
+                recipe.Category = null;
+                recipe.CategoryId = category.Id;
+            }
         }
 
         recipe.CreatedAt = DateTime.Now;
