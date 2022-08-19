@@ -75,8 +75,24 @@ public class RecipesController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = recipe.Id }, recipe);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(Guid id, [FromBody] Recipe recipe)
+    {
+        if (id != recipe.Id)
+        {
+            return BadRequest();
+        }
+
+        recipe.UpdatedAt = DateTime.Now;
+        _db.Entry(recipe).State = EntityState.Modified;
+
+        await _db.SaveChangesAsync();
+
+        return Ok(recipe);
+    }
+
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(long id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var recipe = await _db.Recipes.FindAsync(id);
 
